@@ -823,6 +823,37 @@ Transform:
   m_Father: {fileID: 3547552638476301049}
   m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &3653340832294294796
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4470196890712880382}
+  m_Layer: 0
+  m_Name: AttackPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4470196890712880382
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3653340832294294796}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.349, y: 0.141, z: 0.008}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5453997805176253420}
+  m_RootOrder: -1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &3762062093731197316
 GameObject:
   m_ObjectHideFlags: 0
@@ -2038,6 +2069,7 @@ GameObject:
   - component: {fileID: 8177266322479327498}
   - component: {fileID: 1434135589867652738}
   - component: {fileID: 8779619952860651305}
+  - component: {fileID: 1257021090}
   m_Layer: 0
   m_Name: Paladin WProp J Nordstrom@Sword And Shield Run
   m_TagString: Untagged
@@ -2063,7 +2095,7 @@ Transform:
   - {fileID: 2807372751699716385}
   - {fileID: 5147495343089696058}
   m_Father: {fileID: 0}
-  m_RootOrder: 0
+  m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!136 &-6663925115241944322
 CapsuleCollider:
@@ -2130,11 +2162,15 @@ MonoBehaviour:
   enemyLayer:
     serializedVersion: 2
     m_Bits: 128
-  attackPointTransform: {fileID: 0}
-  attackRange: 1.37
+  attackPointTransform: {fileID: 4470196890712880382}
+  attackRange: 0.55
   movementInput: {x: 0, y: 0}
+  moveAmount: 0
+  cameraInput: {x: 0, y: 0}
   verticalInput: 0
   horizontalInput: 0
+  mouseX: 0
+  mouseY: 0
 --- !u!114 &5910361882629855439
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2160,6 +2196,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4e17f52c7f984ff49a9d99407298273b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  animatorHandler: {fileID: 0}
   runSpeed: 7
   RotationSpeed: 15
   jumpForce: 0
@@ -2206,6 +2243,20 @@ MonoBehaviour:
   m_DefaultActionMap: PlayerControls
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
+--- !u!114 &1257021090
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6828788547335268725}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4f28484bed152648b27267ff3f9ae65, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  anim: {fileID: 5910361882629855433}
+  canRotate: 0
 --- !u!1 &6929915294512653869
 GameObject:
   m_ObjectHideFlags: 0
@@ -2816,6 +2867,7 @@ Transform:
   - {fileID: 3209276993902129960}
   - {fileID: 2828194479440101594}
   - {fileID: 3265571866188085186}
+  - {fileID: 4470196890712880382}
   m_Father: {fileID: 8184883546264035724}
   m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

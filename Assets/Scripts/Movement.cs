@@ -14,12 +14,9 @@ public class Movement : MonoBehaviour
     [HideInInspector]
     public AnimatorManager animatorHandler;
 
-
     public float runSpeed = 6f;
     public float RotationSpeed = 15;
     public int jumpForce;
-
-
 
     CapsuleCollider coll;
     Rigidbody rb;
@@ -32,8 +29,6 @@ public class Movement : MonoBehaviour
         cameraObject = Camera.main.transform;
         animatorHandler = GetComponentInChildren<AnimatorManager>();
     }
-
-
 
     public void AllMovement()
     {
