@@ -784,6 +784,21 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -6663925115241944322, guid: 11aba6c16c5e1034983db44771992b88,
         type: 3}
+      propertyPath: m_Radius
+      value: 0.73
+      objectReference: {fileID: 0}
+    - target: {fileID: -6663925115241944322, guid: 11aba6c16c5e1034983db44771992b88,
+        type: 3}
+      propertyPath: m_Center.x
+      value: -0.02
+      objectReference: {fileID: 0}
+    - target: {fileID: -6663925115241944322, guid: 11aba6c16c5e1034983db44771992b88,
+        type: 3}
+      propertyPath: m_Center.z
+      value: 0.32
+      objectReference: {fileID: 0}
+    - target: {fileID: -6663925115241944322, guid: 11aba6c16c5e1034983db44771992b88,
+        type: 3}
       propertyPath: m_Material
       value: 
       objectReference: {fileID: 13400000, guid: b043cee414eed7d4f94480dcc9a5a582,
@@ -796,7 +811,7 @@ PrefabInstance:
     - target: {fileID: 4909907326435070256, guid: 11aba6c16c5e1034983db44771992b88,
         type: 3}
       propertyPath: m_Constraints
-      value: 84
+      value: 116
       objectReference: {fileID: 0}
     - target: {fileID: 6165264802456073167, guid: 11aba6c16c5e1034983db44771992b88,
         type: 3}
