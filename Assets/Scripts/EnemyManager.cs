@@ -8,7 +8,6 @@ public class EnemyManager : MonoBehaviour
 {
     [SerializeField] Transform target;
     [SerializeField] Transform attackPointTransform;
-    [SerializeField] int damage;
     [SerializeField] float attackRange;
     [SerializeField] LayerMask playerMask;
 
@@ -31,12 +30,10 @@ public class EnemyManager : MonoBehaviour
     {
         if(distanceToPlayer > navMeshAgent.stoppingDistance) 
         {
-            Debug.Log("Chasing");
             ChasePlayer();
         }
         else if (distanceToPlayer <= navMeshAgent.stoppingDistance) 
         {
-            Debug.Log("Attacking");
             AttackPlayer();
         }    
     }
@@ -48,19 +45,13 @@ public class EnemyManager : MonoBehaviour
 
     private void AttackPlayer()
     {
-        //Debug.Log("Got here.");
         Collider[] hitPlayer = Physics.OverlapSphere(attackPointTransform.position, attackRange, playerMask);
 
         foreach(Collider player in hitPlayer)
         {
             Debug.Log("Hit player is: " + player.name);
-            PlayerHealth pH = player.GetComponent<PlayerHealth>();
-            pH.TakeDamage(damage);
+            player.GetComponent<PlayerHealth>().TakeDamage(50);
         }
     }
 
-    private void OnDrawGizmos() 
-    {
-        Gizmos.DrawWireSphere(attackPointTransform.position, attackRange);    
-    }
 }
