@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -18,20 +19,37 @@ public class AnimatorManager : MonoBehaviour
         horizontal = Animator.StringToHash("Horizontal");
     }
 
+    private void Start() 
+    {
+        InputManager.OnStartedAttacking += InputManager_OnStartedAttacking; 
+        InputManager.OnStartedDefending += InputManager_OnStartedDefending; 
+        InputManager.OnFinishedDefending += InputManager_OnFinishedDefending; 
+    }
+
+    private void InputManager_OnStartedAttacking(object sender, EventArgs e)
+    {
+        anim.SetTrigger("IsAttacking");
+    }
+
+    private void InputManager_OnStartedDefending(object sender, EventArgs e)
+    {
+        anim.SetBool("IsDefending", true);
+    }
+
+    private void InputManager_OnFinishedDefending(object sender, EventArgs e)
+    {
+        anim.SetBool("IsDefending", false);
+    }
 
     #region Soulslike animator
     public void UpdateAnimatorValues(float horizontalMovement, float verticalMovement)
     {
-
         //Animation snapping
         float snappedHorizontal;
         float snappedVertical;
 
-
-
         #region snappedVertical
         
-
         if (verticalMovement > 0 && verticalMovement < 0.55f)
         {
             snappedVertical = 0.5f;
@@ -86,7 +104,6 @@ public class AnimatorManager : MonoBehaviour
 
     }
 
-
     public void CanRotate()
     {
         canRotate = true;
@@ -98,6 +115,9 @@ public class AnimatorManager : MonoBehaviour
     }
     #endregion
 
-
+    public void StartWalking(bool isWalking)
+    {
+        anim.SetBool("IsWalking", isWalking);
+    }
 
 }
