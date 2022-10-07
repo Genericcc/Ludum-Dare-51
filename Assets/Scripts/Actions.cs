@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class Actions : MonoBehaviour
 {
+    public static event EventHandler OnStartedAttacking;
+    public static event EventHandler OnFinishedAttacking;
 
     [SerializeField] LayerMask enemyLayer;
     [SerializeField] Transform attackPointTransform;
@@ -25,6 +27,9 @@ public class Actions : MonoBehaviour
         playerHealth = GetComponent<PlayerHealth>();
 
         InputManager.OnStartedAttacking += InputManager_OnStartedAttacking ;
+
+        state = State.Idle;
+        stateTimer = 0;
     }
 
     private void Update() 
@@ -37,6 +42,13 @@ public class Actions : MonoBehaviour
         {
             Defend(false);
         }
+
+        stateTimer -= Time.deltaTime;
+
+        if(stateTimer <= 0 && state == State.Swinging)
+        {
+            Attack();
+        }
     }
 
     public void Defend(bool isDefending)
@@ -46,10 +58,15 @@ public class Actions : MonoBehaviour
 
     private void InputManager_OnStartedAttacking(object sender, EventArgs e)
     {
-        Attack();
+        //Starts the animation
+        OnStartedAttacking?.Invoke(this, EventArgs.Empty);
+        state = State.Swinging;
+        
+        //OverlapSphere Attack will execute in the middle of aniation
+        stateTimer = .75f;
     }
 
-    public void Attack()
+    private void Attack()
     {
         Collider[] hitEnemies = Physics.OverlapSphere(attackPointTransform.position, attackRange, enemyLayer);
 
@@ -58,6 +75,10 @@ public class Actions : MonoBehaviour
             //Debug.Log("Hit enemy is: " + enemy.name);
             enemy.GetComponent<EnemyHealth>().TakeDamage(100);
         }
+
+        state = State.Idle;
+
+        OnFinishedAttacking?.Invoke(this, EventArgs.Empty);
     }
 
     private void OnDrawGizmos() 

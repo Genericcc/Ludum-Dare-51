@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Cinemachine;
 using UnityEngine;
 
 
@@ -8,49 +9,49 @@ using UnityEngine;
 public class Movement : MonoBehaviour
 {
     public static event EventHandler OnMovementStarted;
-    public static event EventHandler OnMovementStopped;
+    public static event EventHandler OnMovementFinished;
+
+     // [SerializeField] private LayerMask groudLayerMask;
+    // [SerializeField] private float downpull;
+    [SerializeField] private CinemachineVirtualCamera testCamera;
+
 
     [HideInInspector]
     public AnimatorManager animatorHandler;
-
-    [SerializeField] private LayerMask groudLayerMask;
-    [SerializeField] private float downpull;
-    [SerializeField] private float runSpeed = 1f;
-    [SerializeField] private float rotationSpeed = 1f;
+  
+    [SerializeField] private float toTargetRotation = 360f;
+    [SerializeField] private float runSpeed = 7;
     [SerializeField] private bool isActive;
+    [SerializeField] private float cameraRotation;
 
-    private InputManager inputManager;
-    private Vector3 moveDirection;
-    private Quaternion newRotationQuaternion;
-
-    private CapsuleCollider coll;
     private Rigidbody rb;
+    private Vector3 input;
 
     private void Awake()
     {
-        inputManager = GetComponent<InputManager>();
         rb = GetComponent<Rigidbody>();
-   
+
         animatorHandler = GetComponentInChildren<AnimatorManager>();
     }
 
     private void Start() 
     {
-        InputManager.OnStartedAttacking += InputManager_OnStartedAttacking;
+        Actions.OnStartedAttacking += Actions_OnStartedAttacking;
+        Actions.OnFinishedAttacking += Actions_OnFinishedAttacking;
+
         InputManager.OnStartedDefending += InputManager_OnStartedDefending; 
         InputManager.OnFinishedDefending += InputManager_OnFinishedDefending; 
     }
 
-    //Events region
+    //Events
     #region 
 
-    private void InputManager_OnStartedAttacking(object sender, EventArgs e)
+    private void Actions_OnStartedAttacking(object sender, EventArgs e)
     {
         isActive = true;
     }
 
-    //called by an event on animation
-    private void OnFinishedAttacking()
+    private void Actions_OnFinishedAttacking(object sender, EventArgs e)
     {
         isActive = false;
     }
@@ -69,78 +70,69 @@ public class Movement : MonoBehaviour
 
     private void Update() 
     {
-       // Gravity();
+        GatherInput();
+        Rotate();
     }
 
-    private void Gravity()
+    private void FixedUpdate() 
     {
-        RaycastHit hit;
-
-        if(Physics.Raycast(transform.position, Vector3.down, out hit, Mathf.Infinity, groudLayerMask))
+        if(input == Vector3.zero || isActive)
         {
-            if(Vector3.Distance(transform.position, hit.point) > 0.1f)
-            {
-                transform.position += Vector3.down * 0.1f * downpull;
-            }
+            OnMovementFinished?.Invoke(this, EventArgs.Empty);
         }
-    }
-
-    public void AllMovement()
-    {
-        //SetVector();
-
-        HandleMovement();
-        //HandleRotation();
-    }
-
-    private void SetVector()
-    {
-        
-        //moveDirection = moveDirection.normalized;
-        
-    }
-
-    private void HandleMovement()
-    {
-        float xShift = InputManager.Instance.GetMoveVector().x * runSpeed * Time.deltaTime;
-        float yShift = InputManager.Instance.GetMoveVector().z * runSpeed * Time.deltaTime;
-
-        moveDirection = new Vector3(xShift, 0, yShift);
-        moveDirection = moveDirection.normalized;
-
-        float toTargetRotation = 10f;
-        transform.forward = Vector3.Lerp(transform.forward, moveDirection, Time.deltaTime * toTargetRotation);
-
-        if(!isActive)
+        else
         {
+            OnMovementStarted?.Invoke(this, EventArgs.Empty);
 
-            if(moveDirection != Vector3.zero)
-            {
-                OnMovementStarted?.Invoke(this, EventArgs.Empty);
-                animatorHandler.StartWalking(true);
-
-                transform.position += moveDirection * Time.deltaTime * runSpeed;
-            }
-            else
-            {
-                OnMovementStopped?.Invoke(this, EventArgs.Empty);
-                animatorHandler.StartWalking(false);
-            }
-        }
-    }
-
-    private void HandleRotation()
-    {
-        if(moveDirection != Vector3.zero)
-        {
-            Quaternion tmpRotation = Quaternion.LookRotation(moveDirection);
-            newRotationQuaternion = Quaternion.Slerp(this.transform.rotation, tmpRotation, rotationSpeed * Time.deltaTime);
-
+            Move();
             
-            transform.rotation = newRotationQuaternion;
+            //transform.position += moveDirection * Time.deltaTime * runSpeed;
         }
-
     }
 
+    private void GatherInput()
+    {
+        input = InputManager.Instance.GetMoveVector(); //new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical"));
+        cameraRotation = testCamera.transform.eulerAngles.y;
+    }
 
+    private void Rotate()
+    {
+        if(input == Vector3.zero) { return; }
+
+        Matrix4x4 isoMatrix = Matrix4x4.Rotate(Quaternion.Euler(0, cameraRotation, 0));
+        input = isoMatrix.MultiplyPoint3x4(input);
+
+        var rot = Quaternion.LookRotation(input, Vector3.up);
+        transform.rotation = Quaternion.RotateTowards(transform.rotation, rot, toTargetRotation * Time.deltaTime);
+
+        //Rotation
+        // float xShift = InputManager.Instance.GetMoveVector().x * runSpeed * Time.deltaTime;
+        // float zShift = InputManager.Instance.GetMoveVector().z * runSpeed * Time.deltaTime;
+
+        // moveDirection.x = xShift;
+        // moveDirection.z = zShift;
+        // moveDirection = moveDirection.normalized;
+        
+        // transform.forward = Vector3.Lerp(transform.forward, moveDirection, Time.deltaTime * toTargetRotation);
+
+        /*testCamera.rotation.y*/ 
+    }
+
+    private void Move()
+    {
+        rb.MovePosition(transform.position + transform.forward * input.normalized.magnitude * runSpeed * Time.deltaTime);
+    }
+}
+
+public static class Helpers 
+{
+    private static Matrix4x4 _isoMatrix; 
+    
+    public static Vector3 ToIso(this Vector3 input, float cameraAngle)
+    {
+        _isoMatrix = Matrix4x4.Rotate(Quaternion.Euler(0, cameraAngle, 0));
+        
+        return _isoMatrix.MultiplyPoint3x4(input);
+    } 
 }

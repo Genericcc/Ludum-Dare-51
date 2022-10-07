@@ -15,12 +15,12 @@ public class PlayerManager : MonoBehaviour
 
     private void Update()
     {
-        inputManager.AllInputs();
+        //inputManager.AllInputs();
     }
 
     private void FixedUpdate()
     {
-        movement.AllMovement();
+        //movement.AllMovement();
     }
 
 }

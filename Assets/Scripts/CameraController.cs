@@ -9,14 +9,16 @@ public class CameraController : MonoBehaviour
     private const float MAX_FOLLOW_Y_OFFSET = 12f;
 
     [SerializeField] CinemachineVirtualCamera cinemachineVirtualCamera;
-
-    private CinemachineTransposer cinemachineTransposer;
-    private Vector3 targetFollowOffset;
     
+    private CinemachineFramingTransposer cinemachineFramingTransposer;
+    private float targetFollowOffset;
+
+    Vector3 rotationVector = new Vector3(0,0,0);
+
     private void Start() 
     {
-        cinemachineTransposer = cinemachineVirtualCamera.GetCinemachineComponent<CinemachineTransposer>();   
-        targetFollowOffset = cinemachineTransposer.m_FollowOffset; 
+        cinemachineFramingTransposer = cinemachineVirtualCamera.GetCinemachineComponent<CinemachineFramingTransposer>();   
+        targetFollowOffset = cinemachineFramingTransposer.m_CameraDistance; 
     }
 
     private void Update() 
@@ -28,8 +30,6 @@ public class CameraController : MonoBehaviour
 
     private void HandleRotation() 
     {
-        Vector3 rotationVector = new Vector3(0,0,0);
-        
         rotationVector.y = InputManager.Instance.GetCameraRotateAmount();
         
         float rotationSpeed = 100f;
@@ -40,13 +40,18 @@ public class CameraController : MonoBehaviour
     {
         float zoomAmount = 1f;
 
-        targetFollowOffset.y += InputManager.Instance.GetCameraZoomAnout() * zoomAmount;
+        targetFollowOffset += InputManager.Instance.GetCameraZoomAnout() * zoomAmount;
 
-        targetFollowOffset.y = Mathf.Clamp(targetFollowOffset.y, MIN_FOLLOW_Y_OFFSET, MAX_FOLLOW_Y_OFFSET);
+        targetFollowOffset = Mathf.Clamp(targetFollowOffset, MIN_FOLLOW_Y_OFFSET, MAX_FOLLOW_Y_OFFSET);
 
         float zoomSpeed = 5f;
-        cinemachineTransposer.m_FollowOffset = Vector3.Lerp(cinemachineTransposer.m_FollowOffset,
+        cinemachineFramingTransposer.m_CameraDistance = Mathf.Lerp(cinemachineFramingTransposer.m_CameraDistance,
                                                             targetFollowOffset,
                                                             Time.deltaTime * zoomSpeed);
+    }
+
+    public float GetCameraRotation()
+    {
+        return transform.rotation.y;
     }
 }

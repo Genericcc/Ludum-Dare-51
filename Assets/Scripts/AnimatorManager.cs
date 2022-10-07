@@ -5,12 +5,10 @@ using UnityEngine;
 
 public class AnimatorManager : MonoBehaviour
 {
-       
-    public Animator anim;
-    int vertical;
-    int horizontal;
-    public bool canRotate;
-
+    private Animator anim;
+    private int vertical;
+    private int horizontal;
+    private bool canRotate;
     
     public void Awake()
     {
@@ -21,12 +19,26 @@ public class AnimatorManager : MonoBehaviour
 
     private void Start() 
     {
-        InputManager.OnStartedAttacking += InputManager_OnStartedAttacking; 
+        Movement.OnMovementStarted += Movement_OnMovementStarted;
+        Movement.OnMovementFinished += Movement_OnMovementFinished;
+
+        Actions.OnStartedAttacking += Actions_OnStartedAttacking; 
+
         InputManager.OnStartedDefending += InputManager_OnStartedDefending; 
         InputManager.OnFinishedDefending += InputManager_OnFinishedDefending; 
     }
 
-    private void InputManager_OnStartedAttacking(object sender, EventArgs e)
+    private void Movement_OnMovementStarted(object sender, EventArgs e)
+    {
+        anim.SetBool("IsWalking", true);
+    }
+
+    private void Movement_OnMovementFinished(object sender, EventArgs e)
+    {
+        anim.SetBool("IsWalking", false);
+    }
+
+    private void Actions_OnStartedAttacking(object sender, EventArgs e)
     {
         anim.SetTrigger("IsAttack");
     }
@@ -106,20 +118,16 @@ public class AnimatorManager : MonoBehaviour
     // }
 
 
-    public void CanRotate()
-    {
-        canRotate = true;
-    }
+    // public void CanRotate()
+    // {
+    //     canRotate = true;
+    // }
 
-    public void StopRotation()
-    {
-        canRotate = false;
-    }
+    // public void StopRotation()
+    // {
+    //     canRotate = false;
+    // }
 
-    public void StartWalking(bool isWalking)
-    {
-        anim.SetBool("IsWalking", isWalking);
-    }
 
 
 

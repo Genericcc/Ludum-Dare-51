@@ -47,22 +47,12 @@ public class InputManager : MonoBehaviour
         playerControls.Disable();
     }
 
-    public void AllInputs()
+    private void Update()
     {
-        //HandleMovementInput();
-        //HandleJump();
-        HandleActions();
+        HandleMouse();
     }
 
-    // private void HandleMovementInput()
-    // {
-    //     verticalInput = movementInput.y;
-    //     horizontalInput = movementInput.x;
-    //     moveAmount = Mathf.Clamp01(Mathf.Abs(horizontalInput) + MathF.Abs(verticalInput));
-    //     animManager.UpdateAnimatorValues(moveAmount, 0);
-    // }
-
-    public void HandleActions()
+    public void HandleMouse()
     {
         if(Input.GetKeyDown(KeyCode.Mouse0))
         { 
@@ -78,7 +68,6 @@ public class InputManager : MonoBehaviour
         { 
             OnFinishedDefending?.Invoke(this, EventArgs.Empty);
         }    
-    
     }
 
     public bool IsMouseRightPressed()
@@ -90,8 +79,7 @@ public class InputManager : MonoBehaviour
         else
         {
             return false;
-        }
-        
+        }  
     }
 
     public Vector3 GetMoveVector()
@@ -118,25 +106,24 @@ public class InputManager : MonoBehaviour
         return inputMoveDir;
     }
 
-       public float GetCameraRotateAmount()
+    public float GetCameraRotateAmount()
     {
         float rotateAmount = 0f;
 
         if(Input.GetKey(KeyCode.Q))
         {
             rotateAmount = +1f;
-            Debug.Log(rotateAmount);
+           // Debug.Log(rotateAmount);
         }
 
         if(Input.GetKey(KeyCode.E))
         {
             rotateAmount = -1f;
-            Debug.Log(rotateAmount);
+            //Debug.Log(rotateAmount);
         }
 
         return rotateAmount;
     }
-
 
     public float GetCameraZoomAnout()
     {
