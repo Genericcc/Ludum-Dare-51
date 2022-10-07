@@ -5,30 +5,30 @@ using UnityEngine;
 
 public class InputManager : MonoBehaviour
 {
+    public static InputManager Instance { get; private set; }
 
-    [SerializeField] LayerMask enemyLayer;
-    [SerializeField] Transform attackPointTransform;
-    [SerializeField] float attackRange;
-    //[SerializeField] float moveSpeed = 20f;
-
-
-    #region AlgessarCode //This is my new additions to the code. I changed the name!
+    public static event EventHandler OnStartedAttacking;
+    public static event EventHandler OnStartedDefending;
+    public static event EventHandler OnFinishedDefending;
 
     PlayerControls playerControls;
     AnimatorManager animManager;
 
     public Vector2 movementInput;
     public float moveAmount;
-    public Vector2 cameraInput;
-    public float verticalInput;
-    public float horizontalInput;
-    public float mouseX;
-    public float mouseY;
-
-
+    // public float verticalInput;
+    // public float horizontalInput;
 
     private void Awake()
     {
+        if(Instance != null) 
+        {
+            Debug.LogError("There's more than one Actions! " + transform + " - " + Instance);
+            Destroy(gameObject);
+            return;
+        }
+        Instance = this;
+
         animManager = GetComponent<AnimatorManager>();
     }
 
@@ -49,62 +49,109 @@ public class InputManager : MonoBehaviour
 
     public void AllInputs()
     {
-        HandleMovementInput();
+        //HandleMovementInput();
         //HandleJump();
-        //HandleAction();
-
+        HandleActions();
     }
 
+    // private void HandleMovementInput()
+    // {
+    //     verticalInput = movementInput.y;
+    //     horizontalInput = movementInput.x;
+    //     moveAmount = Mathf.Clamp01(Mathf.Abs(horizontalInput) + MathF.Abs(verticalInput));
+    //     animManager.UpdateAnimatorValues(moveAmount, 0);
+    // }
 
-
-    private void HandleMovementInput()
+    public void HandleActions()
     {
-        verticalInput = movementInput.y;
-        horizontalInput = movementInput.x;
-        moveAmount = Mathf.Clamp01(Mathf.Abs(horizontalInput) + MathF.Abs(verticalInput));
-        animManager.UpdateAnimatorValues(moveAmount, 0);
-        mouseX = cameraInput.x;
-        mouseY = cameraInput.y;
+        if(Input.GetKeyDown(KeyCode.Mouse0))
+        { 
+            OnStartedAttacking?.Invoke(this, EventArgs.Empty);
+        }    
+
+        if(Input.GetKeyDown(KeyCode.Mouse1))
+        { 
+            OnStartedDefending?.Invoke(this, EventArgs.Empty);
+        }    
+
+        if(Input.GetKeyUp(KeyCode.Mouse1))
+        { 
+            OnFinishedDefending?.Invoke(this, EventArgs.Empty);
+        }    
+    
     }
 
-
-    #endregion
-
-    void Start()
+    public bool IsMouseRightPressed()
     {
+        if(Input.GetMouseButton(1))
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
         
     }
 
-    void Update()
+    public Vector3 GetMoveVector()
     {
-        //MovePlayer();
-        
-        if(Input.GetMouseButton(0))
+        Vector3 inputMoveDir = new Vector3(0, 0, 0);
+
+        if(Input.GetKey(KeyCode.W))
         {
-            Attack();
-        }
-    }
-
-    /*private void MovePlayer()
-    {
-        float xValue = Input.GetAxis("Horizontal") * Time.deltaTime * moveSpeed;
-        float zValue = Input.GetAxis("Vertical") * Time.deltaTime * moveSpeed;
-        transform.Translate(xValue, 0, zValue);     
-    }*/
-
-    private void Attack()
-    {
-        Collider[] hitEnemies = Physics.OverlapSphere(attackPointTransform.position, attackRange, enemyLayer);
-
-        foreach(Collider enemy in hitEnemies)
+            inputMoveDir.z = +1f;
+        }   
+        if(Input.GetKey(KeyCode.S))
         {
-            Debug.Log("Hit enemy is: " + enemy.name);
-            enemy.GetComponent<EnemyHealth>().TakeDamage(100);
-        }
+            inputMoveDir.z = -1f;
+        } 
+        if(Input.GetKey(KeyCode.A))
+        {
+            inputMoveDir.x = -1f;
+        } 
+        if(Input.GetKey(KeyCode.D))
+        {
+            inputMoveDir.x = +1f;
+        }  
+
+        return inputMoveDir;
     }
 
-    private void OnDrawGizmos() 
+       public float GetCameraRotateAmount()
     {
-        Gizmos.DrawWireSphere(attackPointTransform.position, attackRange);    
+        float rotateAmount = 0f;
+
+        if(Input.GetKey(KeyCode.Q))
+        {
+            rotateAmount = +1f;
+            Debug.Log(rotateAmount);
+        }
+
+        if(Input.GetKey(KeyCode.E))
+        {
+            rotateAmount = -1f;
+            Debug.Log(rotateAmount);
+        }
+
+        return rotateAmount;
     }
+
+
+    public float GetCameraZoomAnout()
+    {
+        float zoomAmount = 0f;
+
+        if(Input.mouseScrollDelta.y > 0)
+        {
+            zoomAmount = -1f;
+        }
+        if(Input.mouseScrollDelta.y < 0)
+        {
+            zoomAmount = +1f;
+        }
+
+        return zoomAmount;
+    }
+
 }

@@ -870,11 +870,11 @@ PlayerSettings:
     m_VersionName: 
   apiCompatibilityLevel: 6
   activeInputHandler: 2
-  cloudProjectId: 
+  cloudProjectId: 633017cd-70c0-49af-87d4-847be347df0d
   framebufferDepthMemorylessMode: 0
   qualitySettingsNames: []
-  projectName: 
-  organizationId: 
+  projectName: Ludum Dare 51 (2)
+  organizationId: mbolan
   cloudEnabled: 0
   legacyClampBlendShapeWeights: 0
   playerDataPath: 
