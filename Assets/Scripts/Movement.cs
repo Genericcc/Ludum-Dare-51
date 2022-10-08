@@ -11,14 +11,7 @@ public class Movement : MonoBehaviour
     public static event EventHandler OnMovementStarted;
     public static event EventHandler OnMovementFinished;
 
-     // [SerializeField] private LayerMask groudLayerMask;
-    // [SerializeField] private float downpull;
     [SerializeField] private CinemachineVirtualCamera testCamera;
-
-
-    [HideInInspector]
-    public AnimatorManager animatorHandler;
-  
     [SerializeField] private float toTargetRotation = 360f;
     [SerializeField] private float runSpeed = 7;
     [SerializeField] private bool isActive;
@@ -30,8 +23,6 @@ public class Movement : MonoBehaviour
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
-
-        animatorHandler = GetComponentInChildren<AnimatorManager>();
     }
 
     private void Start() 
@@ -41,6 +32,8 @@ public class Movement : MonoBehaviour
 
         InputManager.OnStartedDefending += InputManager_OnStartedDefending; 
         InputManager.OnFinishedDefending += InputManager_OnFinishedDefending; 
+
+        PlayerHealth.OnPlayerDeath += PlayerHealth_OnPlayerDeath;
     }
 
     //Events
@@ -65,6 +58,12 @@ public class Movement : MonoBehaviour
     {
         isActive = false;
     }
+    
+    private void PlayerHealth_OnPlayerDeath(object sender, EventArgs e)
+    {
+        this.enabled = false;
+    }
+
 
     #endregion
 

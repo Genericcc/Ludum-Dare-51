@@ -26,6 +26,8 @@ public class AnimatorManager : MonoBehaviour
 
         InputManager.OnStartedDefending += InputManager_OnStartedDefending; 
         InputManager.OnFinishedDefending += InputManager_OnFinishedDefending; 
+
+        PlayerHealth.OnPlayerDeath += PlayerHealth_OnPlayerDeath;
     }
 
     private void Movement_OnMovementStarted(object sender, EventArgs e)
@@ -51,6 +53,11 @@ public class AnimatorManager : MonoBehaviour
     private void InputManager_OnFinishedDefending(object sender, EventArgs e)
     {
         anim.SetBool("IsDefending", false);
+    }
+
+    private void PlayerHealth_OnPlayerDeath(object sender, EventArgs e)
+    {
+        anim.SetTrigger("IsDead");
     }
 
     // #region Soulslike animator

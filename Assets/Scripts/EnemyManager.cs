@@ -8,9 +8,9 @@ public class EnemyManager : MonoBehaviour
 {
     [SerializeField] Transform target;
     [SerializeField] Transform attackPointTransform;
+    [SerializeField] LayerMask playerMask;
     [SerializeField] int damage;
     [SerializeField] float attackRange;
-    [SerializeField] LayerMask playerMask;
 
     NavMeshAgent navMeshAgent;
     float distanceToPlayer = Mathf.Infinity;

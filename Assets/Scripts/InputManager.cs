@@ -32,20 +32,30 @@ public class InputManager : MonoBehaviour
         animManager = GetComponent<AnimatorManager>();
     }
 
-    private void OnEnable()
+    private void Start() 
     {
-        if (playerControls == null)
-        {
-            playerControls = new PlayerControls();
-            playerControls.PlayerMovement.Movement.performed += i => movementInput = i.ReadValue<Vector2>();
-        }
-        playerControls.Enable();
+        PlayerHealth.OnPlayerDeath += PlayerHealth_OnPlayerDeath;     
     }
 
-    private void OnDisable()
+    private void PlayerHealth_OnPlayerDeath(object sender, EventArgs e)
     {
-        playerControls.Disable();
+        this.enabled = false;
     }
+
+    // private void OnEnable()
+    // {
+    //     if (playerControls == null)
+    //     {
+    //         playerControls = new PlayerControls();
+    //         playerControls.PlayerMovement.Movement.performed += i => movementInput = i.ReadValue<Vector2>();
+    //     }
+    //     playerControls.Enable();
+    // }
+
+    // private void OnDisable()
+    // {
+    //     playerControls.Disable();
+    // }
 
     private void Update()
     {
@@ -68,18 +78,6 @@ public class InputManager : MonoBehaviour
         { 
             OnFinishedDefending?.Invoke(this, EventArgs.Empty);
         }    
-    }
-
-    public bool IsMouseRightPressed()
-    {
-        if(Input.GetMouseButton(1))
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }  
     }
 
     public Vector3 GetMoveVector()

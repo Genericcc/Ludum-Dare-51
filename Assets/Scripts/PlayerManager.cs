@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class PlayerManager : MonoBehaviour
 {
-    InputManager inputManager;
-    Movement movement;
+    private InputManager inputManager;
+    private Movement movement;
 
     private void Awake()
     {
