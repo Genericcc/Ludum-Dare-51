@@ -1,2 +1,2 @@
 # LudumDare51
- Game JJJJJJJJJam
+ Made mostly during Ludum Dare 51
